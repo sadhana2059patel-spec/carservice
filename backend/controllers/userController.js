@@ -1,113 +1,80 @@
-import User from '../models/User.js'
+import User from "../models/User.js";
 
-export const createUser = async (req, res) => {
-    const newUser = new User (req.body);
+// Get all users (Admin only)
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
 
-    try {
-        const savedUser = await newUser.save()
-
-        res
-        .status(200)
-        .json({
-            success:true,
-            message: "Successfully created",
-            data: savedUser,
-        });
-    } catch (err) {
-        res
-        .status(500)
-        .json({success:false, message: "failed to create. Try again "});
-    }
+    res.status(200).json({
+      message: "✅ Users fetched successfully",
+      count: users.length,
+      data: users,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "❌ Server error: " + err.message });
+  }
 };
 
-//update User
-export const updateUser = async (req, res) => {
-
-    const id = req.params.id;
-
-    try {
-        const updatedUser = await User.findByIdAndUpdate(
-            id,
-            {
-            $set: req.body, 
-        }, 
-        {new:true}
-        );
-
-        res.status(200).json({
-            success: true,
-            message: "Successfully updated",
-            data: updatedUser,
-        });
-
-    } catch(err) {
-        res.status(500).json({
-            success:false,
-            message: "failed to update",
-            
-        });
-    }
-};
-
-//delete User
-export const deleteUser = async (req, res) => {
-    const id = req.params.id;
-
-    try {
-         await User.findByIdAndDelete(id);
-
-        res.status(200).json({
-            success: true,
-            message: "Successfully deleted",
-            
-        });
-
-    } catch(err) {
-        res.status(500).json({
-            success:false,
-            message: "failed to delete",
-            
-        });
-    }
-};
-//getSingle User
+// Get single user
 export const getSingleUser = async (req, res) => {
-    const id = req.params.id;
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id).select("-password");
 
-    try {
-         const user = await User.findById(id);
-
-        res.status(200).json({
-            success: true,
-            message: "Successful",
-            data:user,
-        });
-
-    } catch(err) {
-        res.status(404).json({
-            success:false,
-            message: "not found",
-            
-        });
+    if (!user) {
+      return res.status(404).json({ message: "❌ User not found" });
     }
+
+    res.status(200).json({
+      message: "✅ User fetched successfully",
+      data: user,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "❌ Server error: " + err.message });
+  }
 };
-//getAll User
-export const getAllUser = async (req, res) => {
-    try {
 
-        const users = await User.find({})
+// Update user
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { fullName, phone, address, profileImage } = req.body;
 
-        res.status(200).json(
-            {success: true,
-            message: "Successful",
-            data:users,
-        })
+    const user = await User.findByIdAndUpdate(
+      id,
+      { fullName, phone, address, profileImage },
+      { new: true, runValidators: true }
+    );
 
-    } catch(err) {
-        res.status(404).json({
-            success:false,
-            message: "not found",
-            
-        });
+    if (!user) {
+      return res.status(404).json({ message: "❌ User not found" });
     }
+
+    res.status(200).json({
+      message: "✅ User updated successfully",
+      data: user,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "❌ Server error: " + err.message });
+  }
+};
+
+// Delete user (Admin only)
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findByIdAndDelete(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "❌ User not found" });
+    }
+
+    res.status(200).json({
+      message: "✅ User deleted successfully",
+      data: user,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "❌ Server error: " + err.message });
+  }
 };

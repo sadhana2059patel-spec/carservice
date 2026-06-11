@@ -1,87 +1,70 @@
 import mongoose from "mongoose";
 
-const carSchema = new mongoose.Schema({
-  // id: {
-  //   type: Number,
-  //   required: true,
-  //   unique: true,
-  // },
-  brand: {
-    type: String,
-    required: true,
+const carSchema = new mongoose.Schema(
+  {
+    carName: {
+      type: String,
+      required: [true, "Please provide car name"],
+      trim: true,
+    },
+    brand: {
+      type: String,
+      required: [true, "Please provide car brand"],
+      trim: true,
+    },
+    model: {
+      type: String,
+      required: [true, "Please provide car model"],
+      trim: true,
+    },
+    year: {
+      type: Number,
+      required: [true, "Please provide manufacturing year"],
+    },
+    pricePerDay: {
+      type: Number,
+      required: [true, "Please provide price per day"],
+    },
+    carImage01: {
+      type: String,
+      required: [true, "Please provide car image"],
+    },
+    carImage02: {
+      type: String,
+    },
+    carImage03: {
+      type: String,
+    },
+    carImage04: {
+      type: String,
+    },
+    transmission: {
+      type: String,
+      enum: ["automatic", "manual"],
+      default: "automatic",
+    },
+    seats: {
+      type: Number,
+      default: 5,
+    },
+    fuelType: {
+      type: String,
+      enum: ["petrol", "diesel", "hybrid", "electric"],
+      default: "petrol",
+    },
+    mileage: {
+      type: String,
+    },
+    description: {
+      type: String,
+    },
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
+    features: [String],
   },
-  city: {
-    type: String,
-    required: true,
-  },
-  pickUpDate: {
-    type: Date,
-    required: true,
-},
-dropOffDate: {
-    type: Date,
-    required: true,
-},
-  rating: {
-    type: Number,
-    required: true,
-  },
-  carName: {
-    type: String,
-    required: true,
-  },
-  imgUrl: {
-    type: String,
-    required: true,
-  },
-  model:{
-    type: String,
-    required:true,
-  },
-  price:{
-    type: Number,
-    required:true, 
-  },
-  speed: {
-    type: String,
-    required: true,
-  },
-  gps: {
-    type: String,
-    default: false,
-  },
-  seatType: {
-    type: String,
-    required: true,
-  },
-  automatic: {
-    type: String,
-    default: false,
-  },
-  
-  carQuantity:{
-    type: Number,
-    default: true,
-  },
-  availability:{
-    type: Boolean,
-    default:true,
-  },
- 
-  
-  featured:{
-    type: Boolean,
-    default:false,
-  },
-  
-  description: {
-    type: String,
-    required: false,
-  },
-},
-{timestamps:true}
+  { timestamps: true }
 );
 
 export default mongoose.model("Car", carSchema);
-
-
